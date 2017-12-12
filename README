@@ -1,0 +1,60 @@
+Marinus Alexandru
+Grupa 334CC
+
+Pentru rezolvarea temei am utilizat scheletul de cod pentru laboratorul 5,
+la care am adaugat Partial Solution ca interfata separata de restul fisierelor,
+doua clase ce o implementeaza, numite dupa operatiile principale ale paradigmei
+Map-Reduce (MapTask si ReduceTask), fiecare cu campurile caracteristice (si auxiliare)
+, si o clasa Main.
+
+Programul se desfasoara in felul urmator :
+
+-> pentru fiecare fisier se determina indicii de start ai fragmentelor ce vor fi
+prelucrate
+-> se aloca un WorkPool pentru operatiile de MAP
+-> in acest WorkPool sunt puse MapTask-uri cu parametrii urmatori :
+nume de fisier, indicele de start di dimensiunea fragmentului
+-> acestea sunt executate ( execute() ) si procesate ( processPartialSolution(ps) )
+-> rezultatele lor sunt stocate in HashMap-urile corespunzatoare din clasa Main
+-> se aloca un WorkPool pentru operatiile de REDUCE
+-> pentru fiecare fisier se extrag rezultatele obtinute la operatiile MAP
+-> aceste rezultate sunt transmise ReduceTask-urilor, care sunt executate si procesate
+asemanator MapTask-urilor, cu exceptia diferentelor de functionalitate
+-> rezultatele operatiilor REDUCE sunt scrise in fisierul de iesire
+
+Mai multe detalii se regasesc in fisierele sursa si comentariile lor.
+
+Testele au fost efectuate pe cluster, pe coada ibm-nehalem, arhiva mapreduce.jar fiind
+in prealabil generata cu ant compile jar . Rezultatele lor (cu exceptia 
+testului 2, care a intampinat o exceptie pe care nu am putut-o rezolva nici local)
+sunt scrise mai jos :
+
+Test 1A    -> NT = 1 => 3.335 s
+	   -> NT = 2 => 2.343 s
+	   -> NT = 4 => 1.954 s
+	   -> NT = 8 => 1.870 s
+	   
+Test 3A    -> NT = 1 => 3.559 s
+	   -> NT = 2 => 2.083 s
+	   -> NT = 4 => 1.471 s
+	   -> NT = 8 => 1.292 s
+	   
+Test 4A    -> NT = 1 =>  20.070 s
+	   -> NT = 2 =>  10.823 s
+	   -> NT = 4 =>  6.404 s
+	   -> NT = 8 =>  5.073 s
+
+   NT repezinta numarul de thread-uri.
+
+Dupa cum se poate vedea din masuratori, programul scaleaza, datorita
+utilizarii de metode statice in clasa Main, astfel facandu-se posibila
+adaugarea de rezulatele in cadrul ei imediat ce operatiile de Map si Reduce
+sunt efectuate si reducerea activitatii desfasurate de un thread 
+pe masura adaugarii mai multora.
+
+Mentionez ca pentru rularea mapreduce.jar am utilizat comanda
+  export JAVA_HOME=/usr/lib/jvm/java-1.6.0
+
+Folderul src contine fisierele sursa. In plus, fisierul build.xml
+creeaza arhiva mapreduce.jar prin instructiunea ant compile jar si sterge folderul
+auxiliar de build prin instructiunea ant clean.
